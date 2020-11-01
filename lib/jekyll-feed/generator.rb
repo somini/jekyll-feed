@@ -89,7 +89,7 @@ module JekyllFeed
         path = "#{tags_path}#{tag_slug}.xml"
         next if file_exists?(path)
 
-        @site.pages << make_page(path, :tags => tag)
+        @site.pages << make_page(path, :collection => 'tag', :tags => tag)
       end
     end
 
