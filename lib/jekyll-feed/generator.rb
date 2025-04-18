@@ -47,8 +47,10 @@ module JekyllFeed
     # WIll return `/feed/collection.xml` for other collections
     # Will return `/feed/collection/category.xml` for other collection categories
     def feed_path(collection: "posts", category: nil)
-      prefix = collection == "posts" ? "/feed" : "/feed/#{collection}"
-      return "#{prefix}/#{category}.xml" if category
+      collection_slug = Jekyll::Utils.slugify(collection)
+      prefix = collection == "posts" ? "/feed" : "/feed/#{collection_slug}"
+      category_slug = Jekyll::Utils.slugify(category)
+      return "#{prefix}/#{category_slug}.xml" if category
 
       collections.dig(collection, "path") || "#{prefix}.xml"
     end
