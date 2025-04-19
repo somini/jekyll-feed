@@ -47,8 +47,9 @@ module JekyllFeed
     # WIll return `/feed/collection.xml` for other collections
     # Will return `/feed/collection/category.xml` for other collection categories
     def feed_path(collection: "posts", category: nil)
+      pprefix = (category ? @config["paths"]["categories"] : nil) || "/feed"
       collection_slug = Jekyll::Utils.slugify(collection)
-      prefix = collection == "posts" ? "/feed" : "/feed/#{collection_slug}"
+      prefix = collection == "posts" ? pprefix : "#{pprefix}/#{collection_slug}"
       category_slug = Jekyll::Utils.slugify(category)
       return "#{prefix}/#{category_slug}.xml" if category
 
@@ -84,7 +85,7 @@ module JekyllFeed
       except    = tags_config["except"] || []
       only      = tags_config["only"] || @site.tags.keys
       tags_pool = only - except
-      tags_path = tags_config["path"] || "/feed/by_tag/"
+      tags_path = config["paths"]["tags"] || tags_config["path"] || "/feed/by_tag/"
 
       generate_tag_feed(tags_pool, tags_path)
     end
