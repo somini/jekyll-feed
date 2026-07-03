@@ -12,8 +12,9 @@ module JekyllFeed
         Jekyll.logger.info "Jekyll Feed:", "Skipping feed generation in development"
         return
       end
+      countpages_og = @site.pages.size
       collections.each do |name, meta|
-        Jekyll.logger.info "Jekyll Feed:", "Generating feed for #{name}"
+        Jekyll.logger.debug "Jekyll Feed:", "Generating feed for #{name}"
         (meta["categories"] + [nil]).each do |category|
           path = feed_path(:collection => name, :category => category)
           next if file_exists?(path)
@@ -21,7 +22,11 @@ module JekyllFeed
           @site.pages << make_page(path, :collection => name, :category => category)
         end
       end
+      countfeeds_collections = @site.pages.size - countpages_og
+      Jekyll.logger.info "Jekyll Feed:", "Generated #{countfeeds_collections} collection feeds"
       generate_feed_by_tag if config["tags"] && !@site.tags.empty?
+      countfeeds_tags = @site.pages.size - countpages_og - countfeeds_collections
+      Jekyll.logger.info "Jekyll Feed:", "Generated #{countfeeds_collections} tags feeds"
     end
 
     private
@@ -93,7 +98,7 @@ module JekyllFeed
     def generate_tag_feed(tags_pool, tags_path)
       tags_pool.each do |tag|
         tag_slug = Jekyll::Utils.slugify(tag)
-        Jekyll.logger.info "Jekyll Feed:", "Generating feed for posts tagged #{tag}"
+        Jekyll.logger.debug "Jekyll Feed:", "Generating feed for posts tagged #{tag}"
         path = "#{tags_path}#{tag_slug}.xml"
         next if file_exists?(path)
 
